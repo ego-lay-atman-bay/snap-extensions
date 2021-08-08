@@ -11,3 +11,5 @@ SnapExtensions.primitives.set(
         world.children[0].addPaletteCategory(name, new Color(r,g,b));
     }
 );
+
+return "imported"
