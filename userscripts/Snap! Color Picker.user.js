@@ -13,6 +13,7 @@
     'use strict';
 
     //Based on Snap! code base with minor modification
+    //Thanks dardoro
 
 if( !InputSlotDialogMorph.prototype._createSlotTypeButtons){
 InputSlotDialogMorph.prototype._createSlotTypeButtons = InputSlotDialogMorph.prototype.createSlotTypeButtons
