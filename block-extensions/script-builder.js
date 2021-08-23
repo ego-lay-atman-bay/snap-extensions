@@ -1,3 +1,6 @@
+// Credits to pumpkinhead for the script builder library https://forum.snap.berkeley.edu/t/script-builder-library-part-1/3361
+// which I just copy and pasted all the js code for the blocks into this file
+
 SnapExtensions.primitives.set(
     'sb_after(child,script)',
     function (child,script) {
@@ -109,8 +112,7 @@ return target;
 
 SnapExtensions.primitives.set(
     'sb_fbslot(val,expr)',
-    function (val,expr) {
-		if (!(expr.expression instanceof BlockMorph)) return expr;
+    function (val,expr) {if (!(expr.expression instanceof BlockMorph)) return expr;
 
 var isBlock = val.expression instanceof BlockMorph;
 var type = typeof(val);
@@ -206,9 +208,9 @@ for (let i in outCtx.expression.children) {
  }
 }
 
-return expr; 
+return expr;
  }
-}
+)
 
 SnapExtensions.primitives.set(
     'sb_get-slot(n,target)',
@@ -261,14 +263,14 @@ for (let i in target.expression.children) {
 
 return new Context(); 
  }
-}
+)
 
 SnapExtensions.primitives.set(
     'sb_#slots(expr)',
     function (expr) {
 		return expr.expression.inputs().length;
  }
-}
+)
 
 SnapExtensions.primitives.set(
     'sb_blocks(expr)',
@@ -285,7 +287,7 @@ while (block) {
 
 return new List(out);
  }
-}
+)
 
 SnapExtensions.primitives.set(
     'sb_copy(obj)',
@@ -305,4 +307,4 @@ SnapExtensions.primitives.set(
 
 return obj; //for primitive types
  }
-}
+)
