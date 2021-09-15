@@ -15,8 +15,6 @@
     CommentMorph.prototype.userCut = function () {
 
     window.blockCopy = this.fullCopy()
-	var nb = window.blockCopy.nextBlock()
-	if (nb) {nb.destroy(); }
 
     this.selectForEdit().destroy(); // enable copy-on-edit
 };
@@ -749,6 +747,10 @@ CommentMorph.prototype.userMenu = function () {
             window.blockCopy = this.fullCopy()
 		}
     );
+	menu.addItem(
+		"Cut comment",
+		'userCut'
+	)
     return menu;
 };
 })();
