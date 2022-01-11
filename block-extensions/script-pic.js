@@ -1,4 +1,4 @@
-// script based on https://forum.snap.berkeley.edu/t/how-do-you-get-the-script-pic-of-a-script-using-js/9765/2
+// script based on @alessandrito123's script https://forum.snap.berkeley.edu/t/how-do-you-get-the-script-pic-of-a-script-using-js/9765/2
 
 SnapExtensions.primitives.set(
     'script_pic(script)',
