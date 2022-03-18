@@ -49,12 +49,6 @@ SnapExtensions.primitives.set(
 SnapExtensions.primitives.set(
     'file_prop(prop,file)',
     function (prop,file) {
-        const properties = {
-            name: ,
-            size: ['size'],
-            type: ['type'],
-            lastModified: ['lastModified']
-        }
         if (prop == 'name') {
             return file.name;
         } else if (prop == 'size') {
