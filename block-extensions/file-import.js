@@ -55,7 +55,7 @@ SnapExtensions.primitives.set(
             return file.size;
         } else if (prop == 'type') {
             return file.type;
-        } else if (prop == 'lastModified') {
+        } else if (prop == 'last modified') {
             return file.lastModified;
         } else {
             throw new Error('unrecognized file type', {cause: 'user'});
