@@ -1,7 +1,7 @@
 //credits to @pumpkinhead for the original library. I fixed up a few things so it works much better.
 
 SnapExtensions.primitives.set(
-    'file_ask(types,script'),
+    'file_ask(types,script)',
     function (typesList,callback) {
         var receiver = this;
 
