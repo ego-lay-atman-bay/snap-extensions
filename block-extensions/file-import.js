@@ -2,22 +2,22 @@
 
 SnapExtensions.primitives.set(
     'file_ask(types,script)',
-    function (typesList,callback) {
+    function(typesList, callback) {
         var receiver = this;
 
         var input = document.createElement("input");
         input.type = "file";
         input.id = "fileInput";
-        input.style = "position:absolute;display:none;"
+        input.style = "position:absolute;display:none;";
         input.multiple = true;
         document.body.appendChild(input);
         console.log(callback);
 
         input.onchange = function() {
-        delete input.onchange;
+            delete input.onchange;
 
-        invoke(callback, new List([new List(input.files)]));
-        }
+            invoke(callback, new List([new List(input.files)]));
+        };
 
         var types = typesList.asArray();
 
@@ -25,30 +25,29 @@ SnapExtensions.primitives.set(
         var accept = "";
 
         if (types.length > 0) {
-        for (let i in types) {
-            let v = types[i];
-            
-            if (typeof v == "string") {
-            accept += v
-            }
+            for (let i in types) {
+                let v = types[i];
 
-            //last item doesn't have a comma at the end
-            if (i + 1 < types.length) {
-            accept += ","
-            }
-        }
+                if (typeof v == "string") {
+                    accept += v;
+                };
+
+                if (i + 1 < types.length) { //last item doesn't have a comma at the end
+                    accept += ",";
+                };
+            };
         } else {
-        accept = "*.*"; //i think that means all files
-        }
+            accept = "*.*"; //i think that means all files
+        };
 
-        input.accept = accept; 
+        input.accept = accept;
         input.click();
     }
-)
+);
 
 SnapExtensions.primitives.set(
     'file_prop(prop,file)',
-    function (prop,file) {
+    function(prop, file) {
         if (prop == 'name') {
             return file.name;
         } else if (prop == 'size') {
@@ -58,15 +57,17 @@ SnapExtensions.primitives.set(
         } else if (prop == 'last modified') {
             return file.lastModified;
         } else {
-            throw new Error('unrecognized file attribute', {cause: 'user'});
-        }
+            throw new Error('unrecognized file attribute', {
+                cause: 'user'
+            });
+        };
     }
-)
+);
 
-SnapExtensions.primitives.set (
+SnapExtensions.primitives.set(
     'file_read(file,type',
-    function (file,type,process) {
-            if (!(file instanceof File)) throw new Error("Not a file");
+    function(file, type, process) {
+        if (!(file instanceof File)) throw new Error("Not a file");
 
         var reader = new FileReader();
         var readerResult;
@@ -78,64 +79,64 @@ SnapExtensions.primitives.set (
 
             if (type == "costume" || type == "vector costume") {
                 var img = document.createElement("img");
-                
+
                 img.onload = function() {
-                //for bitmap costume
-                if (type == "costume") {
-                    var canvas = document.createElement("canvas");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    canvas.getContext("2d").drawImage(img, 0, 0);
+                    //for bitmap costume
+                    if (type == "costume") {
+                        var canvas = document.createElement("canvas");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        canvas.getContext("2d").drawImage(img, 0, 0);
 
-                    readerResult = new Costume(canvas, file.name);
-                } else if (type == "vector costume") { //for vector costume
-                    readerResult = new SVG_Costume(img, file.name);
-                }
+                        readerResult = new Costume(canvas, file.name);
+                    } else if (type == "vector costume") { //for vector costume
+                        readerResult = new SVG_Costume(img, file.name);
+                    }
 
-                process.resume()
+                    process.resume();
                 }
 
                 img.src = res;
             } else if (type == "sound") {
-            var audioElem = document.createElement("audio");
+                var audioElem = document.createElement("audio");
 
-            audioElem.type = file.type;
-            audioElem.src = res;
+                audioElem.type = file.type;
+                audioElem.src = res;
 
-            readerResult = new Sound(audioElem, file.name);
-            process.resume(); 
+                readerResult = new Sound(audioElem, file.name);
+                process.resume();
             } else {
                 readerResult = res;
                 process.resume();
             }
         })
-            
+
         if (isMedia) {
-        if (type == "costume" && file.type.slice(0, 6) != "image/") throw new Error("Not an image file");
-        if (type == "vector costume" && file.type != "image/svg+xml") throw new Error("Not an SVG file");
-        if (type == "sound" && file.type.slice(0, 6) != "audio/") throw new Error("Not an audio file");
+            if (type == "costume" && file.type.slice(0, 6) != "image/") throw new Error("Not an image file");
+            if (type == "vector costume" && file.type != "image/svg+xml") throw new Error("Not an SVG file");
+            if (type == "sound" && file.type.slice(0, 6) != "audio/") throw new Error("Not an audio file");
 
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
         } else if (type == "text") {
-        reader.readAsText(file);
+            reader.readAsText(file);
         } else if (type == "binary string") {
-        reader.readAsBinaryString(file);
+            reader.readAsBinaryString(file);
         } else {
-        throw new Error("Incorrect type");
-        }
+            throw new Error("Incorrect type");
+        };
 
-        process.homeContext.variables.addVar("res")
+        process.homeContext.variables.addVar("res");
         process.pause();
 
         return function() {
-        return readerResult;
-        }
+            return readerResult;
+        };
     }
-)
+);
 
-SnapExtensions.primitives.set (
+SnapExtensions.primitives.set(
     'file_test(file)',
-    function (file) {
+    function(file) {
         return !(file instanceof File);
     }
-)
+);
