@@ -9,3 +9,5 @@ Here's a list of the extensions that you can test out.
 <a href="https://snap.berkeley.edu/snap/snap.html#present:Username=ego-lay_atman-bay&ProjectName=categories%20extension">Categories</a>
 <br>
 <a href="https://snap.berkeley.edu/snap/snap.html#present:Username=ego-lay_atman-bay&ProjectName=script%20pic">Script pic</a>
+<br>
+<a href="https://snap.berkeley.edu/snap/snap.html#present:Username=ego-lay_atman-bay&ProjectName=file%20import">File import library</a>
