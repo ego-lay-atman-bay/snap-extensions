@@ -15,4 +15,4 @@ Here's a list of the extensions that you can test out.
 <h2>userscripts</h2>
 <a href="https://ego-lay-atman-bay.github.io/snap-extensions/userscripts/Snap!%20Color%20Picker.user.js">Snap Color Picker</a>
 <br>
-[//]: # (<a href="https://ego-lay-atman-bay.github.io/snap-extensions/userscripts/Copy-paste%20scripts.user.js>Copy and Paste</a>)
+<!-- [//]: # (<a href="https://ego-lay-atman-bay.github.io/snap-extensions/userscripts/Copy-paste%20scripts.user.js>Copy and Paste</a>) -->
