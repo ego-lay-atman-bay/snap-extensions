@@ -1,10 +1,10 @@
 SnapExtensions.primitives.set(
     'clip_copy(txt)',
     function(txt) {
-        if("clipboard" in navigator) {
-          navigator.clipboard.writeText(txt)
+        if ("clipboard" in navigator) {
+            navigator.clipboard.writeText(txt)
         } else {
-          alert("I can't send thing to clipboard.")
+            alert("I can't send thing to clipboard.")
         }
     }
 );
