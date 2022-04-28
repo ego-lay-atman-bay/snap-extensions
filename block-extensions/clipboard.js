@@ -30,8 +30,8 @@ SnapExtensions.primitives.set(
             }, function() {
                 return thing
             }])
-        };
-    };
+        }
+    }
 );
 
 SnapExtensions.primitives.set(
@@ -79,6 +79,6 @@ SnapExtensions.primitives.set(
             }, function() {
                 return thing
             }])
-        };
-    };
+        }
+    }
 );
