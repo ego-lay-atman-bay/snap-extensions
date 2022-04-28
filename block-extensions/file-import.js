@@ -140,3 +140,10 @@ SnapExtensions.primitives.set(
         return !(file instanceof File);
     }
 );
+
+SnapExtensions.primitives.set(
+    'file_lib_in()',
+    function() {
+        return true;
+    }
+);
