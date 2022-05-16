@@ -140,3 +140,11 @@ SnapExtensions.primitives.set(
         return !(file instanceof File);
     }
 );
+
+SnapExtensions.primitives.set(
+    'file_export(name,contents,extension)',
+    function(name,contents,extension) {
+        var ide=this.parentThatIsA(IDE_Morph);
+        ide.saveFileAs(contents,'text/' + extension + '/rtf;charset=utf-8', name);
+    }
+);
