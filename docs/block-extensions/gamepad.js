@@ -66,4 +66,3 @@ SnapExtensions.primitives.set(
         return new List(axes)
     }
 );
-
