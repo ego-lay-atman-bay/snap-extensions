@@ -27,9 +27,30 @@
         return text.replace('MorphicPreferences.isFlat', 'MorphicPreferences.isLight');
     }
 
-    var logo = replace_flat(IDE_Morph.prototype.createLogo.toString());
-    const setlogo = new Function('IDE_Morph.prototype.createLogo = ' + logo);
-    setlogo();
+    function set_func(name) {
+        const getFunc = new Function('return ' + name)
+        var func = getFunc()
+
+        var string = replace_flat(func.toString());
+        const activate = new Function(name + ' = ' + string);
+        activate();
+    }
+
+    set_func('IDE_Morph.prototype.createLogo');
+    
+    // var logo = replace_flat(IDE_Morph.prototype.createLogo.toString());
+    // const setlogo = new Function('IDE_Morph.prototype.createLogo = ' + logo);
+    // setlogo();
+
+    set_func('IDE_Morph.prototype.createControlBar');
+
+    // var controlbar = replace_flat(IDE_Morph.prototype.createControlBar.toString());
+    // const setcontrolbar = new Function('IDE_Morph.prototype.createControlBar = ' + controlbar);
+    // setcontrolbar();
+
+    set_func('IDE_Morph.prototype.createCategories');
+    set_func('IDE_Morph.prototype.createSpriteBar');
+    set_func('IDE_Morph.prototype.createCorralBar');
 
     var dark = replace_flat(IDE_Morph.prototype.setDefaultDesign.toString());
     var light = replace_flat(IDE_Morph.prototype.setFlatDesign.toString())
