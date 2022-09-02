@@ -27,6 +27,10 @@
         return text.replace('MorphicPreferences.isFlat', 'MorphicPreferences.isLight');
     }
 
+    var logo = replace_flat(IDE_Morph.prototype.createLogo.toString());
+    const setlogo = new Function('IDE_Morph.prototype.createLogo = ' + logo);
+    setlogo();
+
     var dark = replace_flat(IDE_Morph.prototype.setDefaultDesign.toString());
     var light = replace_flat(IDE_Morph.prototype.setFlatDesign.toString())
 
