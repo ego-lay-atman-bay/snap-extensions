@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Snap! editor theme
 // @namespace    https://tapermonkey.net
-// @version      0.1
+// @version      0.2
 // @description  New snap editor theme
 // @author       ego-lay_atman-bay
 // @match        https://snap.berkeley.edu/snap/snap.html
