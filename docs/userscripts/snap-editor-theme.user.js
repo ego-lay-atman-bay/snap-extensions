@@ -78,6 +78,9 @@
     set_func('IDE_Morph.prototype.createCategories');
     set_func('IDE_Morph.prototype.createSpriteBar');
     set_func('IDE_Morph.prototype.createCorralBar');
+    set_func('BlockDialogMorph.prototype.addCategoryButton');
+    set_func('BlockDialogMorph.prototype.addCustomCategoryButton');
+    set_func('SpriteMorph.prototype.searchBlocks');
 
     var dark = replace_flat(IDE_Morph.prototype.setDefaultDesign.toString());
     var light = replace_flat(IDE_Morph.prototype.setFlatDesign.toString())
