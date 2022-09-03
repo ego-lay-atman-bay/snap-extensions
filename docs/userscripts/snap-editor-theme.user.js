@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Snap! editor theme
 // @namespace    https://ego-lay-atman-bay.github.io/snap-extensions/
-// @version      0.2
+// @version      0.3
 // @description  New snap editor theme
 // @author       ego-lay_atman-bay
 // @match        https://snap.berkeley.edu/snap/snap.html
