@@ -13,7 +13,7 @@
     'use strict';
 
     function whitelist(url) {
-        console.log('adding {url} to whitelist')
+        console.log(`adding ${url} to whitelist`)
         SnapExtensions['urls'].push(url)
     }
 
