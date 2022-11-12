@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Select Categories
 // @namespace    https://ego-lay-atman-bay.github.io/snap-extensions
-// @version      0.1
+// @version      0.2
 // @description  Adds the ability to select and deselect categories in the export and unused blocks dialogs.
 // @author       ego-lay-atman-bay
 // @match        https://snap.berkeley.edu/*/snap.html
