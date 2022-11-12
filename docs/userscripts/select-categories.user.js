@@ -39,5 +39,7 @@
         var newFunc = [func.substring(0, start), injectStr, func.substring(end + 1, func.length)].join('')
         const injectFunc = new Function('BlockExportDialogMorph.prototype.buildContents = ' + newFunc)
         injectFunc()
+
+        BlockRemovalDialogMorph.prototype.buildContents = BlockExportDialogMorph.prototype.buildContents;
     }
 })();
