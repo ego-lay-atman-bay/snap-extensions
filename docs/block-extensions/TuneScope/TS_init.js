@@ -2,6 +2,8 @@
 var AudioContextFunc = window.AudioContext || window.webkitAudioContext;
 var audioContext = new AudioContextFunc();
 
+window.currentNote = ""
+
 // calculate midi pitches and frequencies
 var tempMidiPitches = {}
 var tempMidiFreqs = {}
@@ -11,9 +13,9 @@ let notes = [
 ]
 
 for (var i = 0; i <= 127; i++) {
-    let note = notes[i % 12] + Math.floor((i - 12) / 12);
+    let note = notes[i % 12] + Math.floor((i-12)/12);
     tempMidiPitches[note] = i;
-    tempMidiFreqs[note] = 440 * Math.pow(2, (i - 69) / 12)
+    tempMidiFreqs[note] = 440 * Math.pow(2, (i - 69)/12)
 }
 
 const _convertToSharp = (note) => {
@@ -36,9 +38,10 @@ const _convertToSharp = (note) => {
 window.parent.midiPitches = tempMidiPitches;
 window.parent.midiFreqs = tempMidiFreqs;
 
+
 window.playNote = (note, noteLength, instrumentName, volume) => {
-    console.log(note, noteLength, instrumentName, volume)
-    if (note == "R" || note == "r") return;
+  window.currentNote = note
+   if (note == "R" || note == "r") return;
 
     note = noteNum(note)
     noteLength = noteLengthToTimeValue(noteLength)
@@ -62,11 +65,11 @@ window.playNote = (note, noteLength, instrumentName, volume) => {
 }
 
 window.timeSignatureToBeatsPerMeasure = (time) => {
-    timeSig = time.split('/');
-    // newTime = (timeSig[0]*4)/timeSig[1];
-    newTime = [parseInt(timeSig[0]), 4 / timeSig[1]];
-    console.log(newTime);
-    return newTime;
+    timeSig = time.split('/')
+    // newTime = (timeSig[0]*4)/timeSig[1]
+    newTime = [parseInt(timeSig[0]), 4 / timeSig[1]]
+    console.log(newTime)
+    return newTime
 }
 
 window.baseTempo = 60;
@@ -84,41 +87,41 @@ window.noteLengthToTimeValue = (duration) => {
             'eighth': 0.5,
             'sixteenth': 0.25,
             'thirtysecond': 0.125
-        };
+        }
 
-        var dots = 0;
+        var dots = 0
 
         function dotted(duration) {
-            dots += 1;
-            return duration + (start * Math.pow(0.5, dots));
-        };
+            dots += 1
+            return duration + (start * Math.pow(0.5, dots))
+        }
 
         modifiers = {
             'dotted': dotted,
             'tie': (d) => {
-                return d * 2;
+                return d * 2
             },
             'triplet': (d) => {
-                return (((d > 0) ? d : 1) * 2) / 3;
+                return (((d > 0) ? d : 1) * 2) / 3
             }
         }
 
         for (let i = 0; i < splitDuration.length; i++) {
-            splitDuration[i] = splitDuration[i].toLowerCase();
+            splitDuration[i] = splitDuration[i].toLowerCase()
         }
 
         var noteDur = notes[splitDuration.find(e => notes[e] != undefined)]
         start = noteDur;
 
-        console.log(splitDuration);
+        console.log(splitDuration)
         for (let keyword = 0; keyword < splitDuration.length; keyword++) {
-            console.log(keyword, splitDuration[keyword]);
-            console.log(noteDur);
+            console.log(keyword, splitDuration[keyword])
+            console.log(noteDur)
             if (modifiers[splitDuration[keyword]] != undefined) {
-                noteDur = modifiers[splitDuration[keyword]](noteDur);
+                noteDur = modifiers[splitDuration[keyword]](noteDur)
             }
         }
-        return noteDur;
+        return noteDur
     } else {
         return parseFloat(duration);
     }
@@ -127,7 +130,7 @@ window.noteLengthToTimeValue = (duration) => {
 function noteNum(noteName) {
     if (Array.isArray(noteName)) {
         return noteName.map((e) => {
-            return noteNum(e);
+            return noteNum(e)
         })
     }
 
@@ -147,11 +150,16 @@ function noteNum(noteName) {
             }
         }
 
+        function allButFirst(list) {
+            result = list;
+            result.splice(1, 1);
+        }
+
         function letter(string, list) {
             var result = [];
             if (typeof list == 'object') {
                 for (let i = 0; i < list.length; i++) {
-                    result.push(string[list[i]]);
+                    result.push(string[list[i]])
                 }
             } else {
                 result = string[list];
@@ -159,11 +167,11 @@ function noteNum(noteName) {
             return result;
         }
 
-        splitNoteName = noteName.split('');
-        var index = splitNoteName.indexOf(splitNoteName.find(e => !isNaN(e) || e == '-'));
-        var octiveNum = ((index > 0) ? letter(noteName, range(index, noteName.length)) : ['4']).join('');
-        console.log(octiveNum);
-        var octive = parseFloat((!isNaN(octiveNum) ? octiveNum : 4));
+        splitNoteName = noteName.split('')
+        var index = splitNoteName.indexOf(splitNoteName.find(e => !isNaN(e) || e == '-'))
+        var octiveNum = ((index > 0) ? letter(noteName, range(index, noteName.length)) : ['4']).join('')
+        console.log(octiveNum)
+        var octive = parseFloat((!isNaN(octiveNum) ? octiveNum : 4))
         var notes = {
             'c': 1,
             'd': 3,
@@ -172,26 +180,26 @@ function noteNum(noteName) {
             'g': 8,
             'a': 10,
             'b': 12
-        };
-        var note = notes[letter(noteName, 0).toLowerCase()];
+        }
+        var note = notes[letter(noteName, 0).toLowerCase()]
 
-        var accidentals = letter(noteName, range(0, (index > 0) ? index - 1 : noteName.length));
+        var accidentals = letter(noteName, range(0, (index > 0) ? index - 1 : noteName.length))
 
         for (i = 0; i < accidentals.length; i++) {
-            item = accidentals[i];
+            item = accidentals[i]
 
             if (item == undefined) {
-                continue;
+                continue
             }
 
             if (item == '#' || item == 's') {
-                note += 1;
+                note += 1
             } else if (item == '♭' || item == 'b') {
-                note -= 1;
+                note -= 1
             }
         }
 
-        return ((note + ((13 * (octive + 1)) - octive)) - 2);
+        return ((note + ((13 * (octive + 1)) - octive)) - 2)
     } else {
         return parseFloat(noteName);
     }
@@ -295,6 +303,10 @@ window.parent.instrumentData = {
         path: "https://surikov.github.io/webaudiofontdata/sound/0580_GeneralUserGS_sf2_file.js",
         name: "_tone_0580_GeneralUserGS_sf2_file"
     },
+    "vibraphone": {
+        path: "https://surikov.github.io/webaudiofontdata/sound/0110_GeneralUserGS_sf2_file.js",
+        name: "_tone_0110_GeneralUserGS_sf2_file"
+    },
 
     // drums
 
@@ -330,6 +342,10 @@ window.parent.instrumentData = {
         path: "https://surikov.github.io/webaudiofontdata/sound/12849_21_FluidR3_GM_sf2_file.js",
         name: "_drum_49_21_FluidR3_GM_sf2_file"
     },
+    "vibraphone": {
+        path: "https://surikov.github.io/webaudiofontdata/sound/0110_GeneralUserGS_sf2_file.js",
+        name: "_tone_0110_GeneralUserGS_sf2_file"
+    },
 }
 
 // load all instruments
@@ -346,14 +362,18 @@ class Tone {
         this.id = id;
         this.on = false;
 
-        const thisPlayer = new Object;
-        thisPlayer.context = new AudioContext();
-        thisPlayer.oscillator = thisPlayer.context.createOscillator();
-        thisPlayer.gainobj = thisPlayer.context.createGain();
-        thisPlayer.oscillator.frequency.value = 100;
-        thisPlayer.gainobj.gain.value = 1;
-        thisPlayer.oscillator.connect(thisPlayer.gainobj);
-        thisPlayer.gainobj.connect(thisPlayer.context.destination);
+    //const pannerNode = new StereoPannerNode(audioContext, -1);
+    const thisPlayer = new Object;
+    thisPlayer.context = new AudioContext();
+    thisPlayer.oscillator = thisPlayer.context.createOscillator();
+    thisPlayer.panner = thisPlayer.context.createStereoPanner();
+    thisPlayer.gainobj = thisPlayer.context.createGain();
+    thisPlayer.oscillator.frequency.value = 100;
+    thisPlayer.panner.pan.value = 0;
+    thisPlayer.gainobj.gain.value = 1;
+    thisPlayer.oscillator.connect(thisPlayer.panner);
+    thisPlayer.panner.connect(thisPlayer.gainobj);
+    thisPlayer.gainobj.connect(thisPlayer.context.destination);
 
         this.player = thisPlayer;
     }
@@ -368,23 +388,28 @@ class Tone {
         this.player.oscillator.frequency.value = Math.max(freq, 0);
     }
 
-    setAmpl = (ampl) => {
-        this.ampl = ampl;
-        this.player.gainobj.gain.value = this.dBFS2gain(parseInt(ampl));
-    }
+  setAmpl = (ampl) => {
+    this.ampl = ampl;
+    this.player.gainobj.gain.value = this.dBFS2gain(parseInt(ampl));
+  }
 
-    turnOn = () => {
-        console.log("on");
-        if (this.on) return;
-        console.log("turning on");
-        if (!this.started) {
-            this.player.oscillator.start(0);
-            this.started = true;
-        } else {
-            this.player.context.resume();
-        }
-        this.on = true;
+  setPan = (pan) => {
+    this.pan = Math.min(Math.max(pan, -100), 100);
+    this.player.panner.pan.setValueAtTime(this.pan / 100, this.player.context.currentTime);
+  }
+
+  turnOn = () => {
+    console.log("on");
+    if (this.on) return;
+    console.log("turning on");
+    if (!this.started) {
+      this.player.oscillator.start(0);
+      this.started = true;
+    } else {
+      this.player.context.resume();
     }
+    this.on = true;
+  }
 
     turnOff = () => {
         console.log("off");

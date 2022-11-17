@@ -1,3 +1,9 @@
+// Load urls
+
+// SnapExtensions.primitives.get('src_load(url)')()
+
+// extension functions
+
 SnapExtensions.primitives.set(
     'ts_setinst(name)',
     function (name) {
@@ -35,6 +41,14 @@ SnapExtensions.primitives.set(
 
 SnapExtensions.primitives.set(
     'ts_playtracks(tracklist, timesignature, tempo)',
+    'ts_getcurrentnote()',
+    function () {
+        return window.currentNote
+    }
+)
+
+SnapExtensions.primitives.set(
+    'ts_playtracks(tracklist, timesignature)',
     function (tracksList, timeSignature, tempo) {
         const multiplyArray = (arr, length) =>
           Array.from({ length }, () => arr).flat()
@@ -309,16 +323,20 @@ SnapExtensions.primitives.set(
 );
 
 SnapExtensions.primitives.set(
-    'ts_settone(id, frequency, amplitude)',
-    function (id, freq, ampl) {
+    'ts_settone(id, frequency, amplitude, balance)',
+    function (id, freq, ampl, bal) {
         var created = false;
         if (!window.tones[id]) {
           window.tones[id] = new window.Tone(id);
           created = true;
+        } else {
+            window.tones[id].turnOff();
+            created = true;
         }
 
         window.tones[id].setFreq(freq);
         window.tones[id].setAmpl(ampl * 100);
+        window.tones[id].setPan(bal);
         created && window.tones[id].turnOn();
     }
 );
