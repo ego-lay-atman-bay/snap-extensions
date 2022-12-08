@@ -17,7 +17,7 @@
     function update_settings() {
         var settings = IDE_Morph.prototype.applySavedSettings.toString();
         var settings_lines = settings.split('\n');
-        
+
         var get_light_mode = "        theme = this.getSetting('theme');\n\n    if (theme === 'light') {\n        this.setLightDesign();\n    } else if (theme == 'dark') {\n        this.setDarkDesign();\n    } else {\n        if (design == 'flat') {\n            this.setLightDesign();\n        } else {\n            this.setDarkDesign();\n        }\n    }";
 
         settings_lines.splice(settings_lines.indexOf(''), 0, get_light_mode);
@@ -30,12 +30,26 @@
 
     IDE_Morph.prototype.darkDesign = function () {
         this.setDarkDesign();
+
+        PushButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        ToggleButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        TabMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        ToggleMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        ToggleElementMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+
         this.refreshIDE();
         this.saveSetting('theme', 'dark');
     };
-    
+
     IDE_Morph.prototype.lightDesign = function () {
         this.setLightDesign();
+
+        PushButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        ToggleButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        TabMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        ToggleMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+        ToggleElementMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
+
         this.refreshIDE();
         this.saveSetting('theme', 'light');
     };
@@ -64,7 +78,7 @@
 
         const injected_flat = new Function('IDE_Morph.prototype.flatDesign = ' + flatdesign.join('\n'));
         const injected_default = new Function('IDE_Morph.prototype.defaultDesign = ' + defaultdesign.join('\n'));
-        
+
         injected_flat();
         injected_default();
     }
@@ -84,6 +98,7 @@
 
     var dark = replace_flat(IDE_Morph.prototype.setDefaultDesign.toString());
     var light = replace_flat(IDE_Morph.prototype.setFlatDesign.toString())
+    console.log(dark)
 
     const setdark = new Function('IDE_Morph.prototype.setDarkDesign = ' + dark);
     const setlight = new Function('IDE_Morph.prototype.setLightDesign = ' + light);
@@ -100,14 +115,14 @@
         MorphicPreferences.isFlat = false;
         IDE_Morph.prototype.scriptsPaneTexture = this.scriptsTexture();
     };
-    
+
     var menu = IDE_Morph.prototype.settingsMenu.toString();
     var split = menu.split("\n    addPreference(\n        'Flat design',\n        () => {\n            if (MorphicPreferences.isFlat) {\n                return this.defaultDesign();\n            }\n            this.flatDesign();\n        },\n        MorphicPreferences.isFlat,\n        'uncheck for default\\nGUI design',\n        'check for alternative\\nGUI design',\n        false\n    );");
     split.splice(1, 0, "    addPreference(\n        'Flat design',\n        () => {\n            if (MorphicPreferences.isFlat) {                return this.defaultDesign();\n            }\n            this.flatDesign();\n        },        MorphicPreferences.isFlat,\n        'uncheck for default\\nGUI design',        'check for alternative\\nGUI design',\n        false\n    );\n	addPreference(\n        'Dark theme',\n        () => {\n            if (MorphicPreferences.isLight) {\n                return this.darkDesign();\n            }\n            this.lightDesign();\n        },\n        !MorphicPreferences.isLight,\n        'uncheck for light\\nGUI theme',\n        'check for dark\\nGUI theme',\n        false\n    );");
     var newFun = split.join('');
     const dark_mode = new Function('IDE_Morph.prototype.settingsMenu = ' + newFun);
     dark_mode();
-    
+
     update_settings();
-    
+
 })();
