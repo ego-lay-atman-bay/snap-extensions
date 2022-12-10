@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Snap! editor theme
 // @namespace    https://ego-lay-atman-bay.github.io/snap-extensions/
-// @version      0.4
+// @version      0.5
 // @description  New snap editor theme
 // @author       ego-lay_atman-bay
 // @match        https://snap.berkeley.edu/snap/snap.html
@@ -31,24 +31,12 @@
     IDE_Morph.prototype.darkDesign = function () {
         this.setDarkDesign();
 
-        PushButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        ToggleButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        TabMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        ToggleMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        ToggleElementMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-
         this.refreshIDE();
         this.saveSetting('theme', 'dark');
     };
 
     IDE_Morph.prototype.lightDesign = function () {
         this.setLightDesign();
-
-        PushButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        ToggleButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        TabMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        ToggleMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
-        ToggleElementMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;
 
         this.refreshIDE();
         this.saveSetting('theme', 'light');
@@ -98,7 +86,17 @@
 
     var dark = replace_flat(IDE_Morph.prototype.setDefaultDesign.toString());
     var light = replace_flat(IDE_Morph.prototype.setFlatDesign.toString())
-    console.log(dark)
+
+    dark = dark.split('\n')
+    dark.splice(-1, 0, "PushButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    ToggleButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    TabMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    ToggleMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    ToggleElementMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;")
+    dark = dark.join('\n')
+
+    light = light.split('\n')
+    light.splice(-1, 0, "    PushButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    ToggleButtonMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    TabMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    ToggleMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;\n    ToggleElementMorph.prototype.outlineColor = IDE_Morph.prototype.frameColor;")
+    light = light.join('\n')
+
+    // console.log(dark)
+    // console.log(light)
 
     const setdark = new Function('IDE_Morph.prototype.setDarkDesign = ' + dark);
     const setlight = new Function('IDE_Morph.prototype.setLightDesign = ' + light);
