@@ -66,3 +66,19 @@ SnapExtensions.primitives.set(
         return new List(axes)
     }
 );
+
+SnapExtensions.primitives.set(
+    'gp_rumble(gamepad, )',
+    function(gamepad, delay, duration, strong, weak) {
+        if(!gamepad) {
+            throw new Error('not a gamepad')
+        }
+        
+        gamepad.vibrationActuator.playEffect('dual-rumble', {
+            startDelay: delay,
+            duration: duration,
+            weakMagnitude: weak,
+            strongMagnitude: strong,
+        });
+    }
+);
