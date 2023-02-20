@@ -68,7 +68,7 @@ SnapExtensions.primitives.set(
 );
 
 SnapExtensions.primitives.set(
-    'gp_rumble(gamepad, )',
+    'gp_rumble(gamepad, delay, duration, strong, weak)',
     function(gamepad, delay, duration, strong, weak) {
         if(!gamepad) {
             throw new Error('not a gamepad')
