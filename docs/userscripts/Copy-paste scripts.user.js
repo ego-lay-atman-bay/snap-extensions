@@ -1,185 +1,257 @@
 // ==UserScript==
-// @name         Copy/paste scripts test
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @name         Copy/paste scripts
+// @namespace    https://ego-lay-atman-bay.github.io/snap-extensions/
+// @version      0.2
 // @description  Copy/paste scripts
 // @author       ego-lay_atman-bay
 // @match        https://snap.berkeley.edu/snap/snap.html
-// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @icon         https://forum.snap.berkeley.edu/favicon/proxied?https%3A%2F%2Fd1eo0ig0pi5tcs.cloudfront.net%2Foptimized%2F2X%2Ff%2Ffec08d3829a26a75ae620be49835ef91b13ba8e9_2_32x32.png
 // @grant        none
 // ==/UserScript==
 (function() {
     'use strict';
-
-    CommentMorph.prototype.userCut = function() {
-
-        window.blockCopy = this.fullCopy()
-
-        this.selectForEdit().destroy(); // enable copy-on-edit
-    };
-
-    ReporterBlockMorph.prototype.userCut = function() {
-
-        window.blockCopy = this.fullCopy()
-
-        // make sure to restore default slot of parent block
-        var target = this.selectForEdit(); // enable copy-on-edit
-        if (target !== this) {
-            return this.userDestroy.call(target);
+    IDE_Morph.prototype.userCopy = function (event) {
+        var world = this.world();
+        var underHand,
+            hand,
+            mouseOverList,
+            isComment;
+    
+        hand = world.hand;
+        mouseOverList = hand.mouseOverList;
+    
+        underHand = mouseOverList[0].parentThatIsA(BlockMorph) || 
+                    mouseOverList[0].parentThatIsA(CommentMorph);
+        
+        if (underHand && !underHand.isTemplate && !(underHand instanceof PrototypeHatBlockMorph)) {
+            let content = underHand.fullCopy();
+            isComment = content instanceof CommentMorph;
+    
+            if (isComment) {
+                this.clipboard = {
+                    type: 'comment',
+                    content: content.text()
+                }
+                return
+            }
+    
+            if ((event === 'ctrl shift c') && (content instanceof CommandBlockMorph || content instanceof HatBlockMorph)) {
+                var nb = content.nextBlock();
+                if (nb) {
+                    nb.destroy();
+                }
+            }
+    
+            content.parent = this;
+            this.clipboard = {
+                type: 'xml',
+                content: content.toXMLString()
+            };
+            content.destroy();
         }
-
-        // for undrop / redrop
-        var scripts = this.parentThatIsA(ScriptsMorph);
-        if (scripts) {
-            scripts.clearDropInfo();
-            scripts.lastDroppedBlock = this;
-            scripts.recordDrop(this.situation());
-            scripts.dropRecord.action = 'delete';
+    }
+    
+    IDE_Morph.prototype.userCut = function (event) {
+        var world = this.world();
+        var underHand,
+            hand,
+            mouseOverList,
+            isComment;
+    
+        hand = world.hand;
+        mouseOverList = hand.mouseOverList;
+    
+        underHand = mouseOverList[0].parentThatIsA(BlockMorph) || 
+                    mouseOverList[0].parentThatIsA(CommentMorph);
+        
+        if (underHand && !underHand.isTemplate && !(underHand instanceof PrototypeHatBlockMorph)) {
+            let content = underHand.fullCopy();
+            isComment = content instanceof CommentMorph;
+    
+            if (isComment) {
+                this.clipboard = {
+                    type: 'comment',
+                    content: content.text()
+                }
+                underHand.userDestroy()
+                return
+            }
+    
+            if (content instanceof CommandBlockMorph || content instanceof HatBlockMorph) {
+                var nb = content.nextBlock();
+                if (nb) {
+                    nb.destroy();
+                }
+            }
+    
+            content.parent = this;
+            this.clipboard = {
+                type: 'xml',
+                content: content.toXMLString()
+            };
+            content.destroy();
+    
+            underHand.userDestroy()
         }
-
-        this.topBlock().fullChanged();
-        this.prepareToBeGrabbed(this.world().hand);
-        this.destroy();
-
-        var nb = window.blockCopy.fullCopy()
-        nb = nb.nextBlock()
-        if (nb) {
-            nb.destroy();
+    }
+    
+    IDE_Morph.prototype.userPaste = function (event) {
+        var world = this.world();
+    
+        if (this.clipboard) {
+            switch (this.clipboard.type) {
+                case 'xml':
+                    this.droppedText(this.clipboard.content);
+                    break;
+                case 'comment':
+                    let comment = new CommentMorph(this.clipboard.content);
+                    comment.pickUp(world);
+                    world.hand.grabOrigin = {
+                        origin: this.palette,
+                        position: this.palette.center()
+                    };
+                    break;
+                default:
+                    break;
+            }
         }
-    };
-
-    CommandBlockMorph.prototype.userCut = function() {
-
-        window.blockCopy = this.fullCopy()
-        var nb = window.blockCopy.nextBlock()
-        if (nb) {
-            nb.destroy();
-        }
-
-        var target = this.selectForEdit(); // enable copy-on-edit
-        if (target !== this) {
-            return this.userDestroy.call(target);
-        }
-        if (this.nextBlock()) {
-            this.userDestroyJustThis();
-            return;
-        }
-
-        var scripts = this.parentThatIsA(ScriptsMorph),
-            ide = this.parentThatIsA(IDE_Morph),
-            parent = this.parentThatIsA(SyntaxElementMorph),
-            cslot = this.parentThatIsA(CSlotMorph);
-
-        // for undrop / redrop
-        if (scripts) {
-            scripts.clearDropInfo();
-            scripts.lastDroppedBlock = this;
-            scripts.recordDrop(this.situation());
-            scripts.dropRecord.action = 'delete';
-        }
-
-        this.prepareToBeGrabbed(); // fix outer ring reporter slot
-
-        if (ide) {
-            // also stop all active processes hatted by this block
-            ide.removeBlock(this);
-        } else {
-            this.destroy();
-        }
-        if (cslot) {
-            cslot.fixLayout();
-        }
-        if (parent) {
-            parent.reactToGrabOf(this); // fix highlight
-        }
-    };
+    }
 
     BlockMorph.prototype._userMenu = BlockMorph.prototype._userMenu || BlockMorph.prototype.userMenu;
     BlockMorph.prototype.userMenu = function() {
-        var
-            menu = this._userMenu(),
+        var menu = this._userMenu(),
             ide = this.parentThatIsA(IDE_Morph) || this.parentThatIsA(BlockEditorMorph)?.target?.parentThatIsA(IDE_Morph),
             top = this.topBlock();
 
         if (!this?.isTemplate) {
-            menu.addLine()
+            menu.addLine();
+            if ((this instanceof CommandBlockMorph)) {
+                menu.addItem(
+                    'copy all',
+                    () => {
+                        ide.clipboard = {
+                            type: 'xml',
+                            content: this.toXMLString()
+                        };
+                    },
+                    'Send this block and all\nblocks underneath to the clipboard.'
+                );
+            }
             menu.addItem(
-                "copy all",
+                'copy block',
                 () => {
-                    window.blockCopy = this.fullCopy()
-                },
-                'copies this block\nand blocks under it'
-            );
-            menu.addItem(
-                "cut block",
-                'userCut',
-                'copies this block and\ndeletes it'
-            );
-            menu.addItem(
-                "copy block",
-                () => {
-                    window.blockCopy = this.fullCopy()
-                    var nb = window.blockCopy.nextBlock()
-                    if (nb) {
-                        nb.destroy();
+                    let block = this.fullCopy();
+                    if (this instanceof CommandBlockMorph || this instanceof HatBlockMorph) {
+                        var nb = block.nextBlock();
+                        if (nb) {
+                            nb.destroy();
+                        }
                     }
+
+                    block.parent = ide;
+                    ide.clipboard = {
+                        type: 'xml',
+                        content: block.toXMLString()
+                    };
+                    block.destroy();
                 },
-                'copies only this block'
+                'Send this block to the clipboard.'
+            );
+            menu.addItem(
+                'cut block',
+                () => {
+                    let block = this.fullCopy();
+                    if (this instanceof CommandBlockMorph || this instanceof HatBlockMorph) {
+                        var nb = block.nextBlock();
+                        if (nb) {
+                            nb.destroy();
+                        }
+                    }
+
+                    block.parent = ide;
+                    ide.clipboard = {
+                        type: 'xml',
+                        content: block.toXMLString()
+                    };
+                    block.destroy();
+
+                    this.userDestroy();
+                },
+                'Send this block to the\nclipboard and delete this block.'
             );
         }
         return menu;
     }
-	BlockMorph.prototype._userMenu = BlockMorph.prototype._userMenu || BlockMorph.prototype.userMenu;
 
     CommentMorph.prototype._userMenu = CommentMorph.prototype._userMenu || CommentMorph.prototype.userMenu;
     CommentMorph.prototype.userMenu = function() {
-        var
-            menu = this._userMenu(),
+        var menu = this._userMenu(),
             ide = this.parentThatIsA(IDE_Morph) || this.parentThatIsA(BlockEditorMorph)?.target?.parentThatIsA(IDE_Morph)
-
+            
         menu.addLine();
-
         menu.addItem(
-            "Copy comment",
+            'copy comment',
             () => {
-                window.blockCopy = this.fullCopy()
-            }
+                ide.clipboard = {
+                    type: 'comment',
+                    content: this.text()
+                };
+            },
+            'Send this comment\nto the clipboard'
         );
         menu.addItem(
-            "Cut comment",
-            'userCut'
-        )
+            'cut comment',
+            () => {
+                ide.clipboard = {
+                    type: 'comment',
+                    content: this.text()
+                };
+    
+                this.userDestroy()
+            },
+            'Send this comment to the\nclipboard and delete this comment'
+        );
         return menu;
     }
 
     ScriptsMorph.prototype._userMenu = ScriptsMorph.prototype._userMenu || ScriptsMorph.prototype.userMenu;
     ScriptsMorph.prototype.userMenu = function() {
-        var
-            menu = this._userMenu(),
+        var menu = this._userMenu(),
             ide = this.parentThatIsA(IDE_Morph) || this.parentThatIsA(BlockEditorMorph)?.target?.parentThatIsA(IDE_Morph)
-        menu.addLine()
-        menu.addItem(
-            "paste",
-            () => {
-                var cpy = window.blockCopy.fullCopy(),
-                    ide = this.parentThatIsA(IDE_Morph),
-                    blockEditor = this.parentThatIsA(BlockEditorMorph);
-                cpy.pickUp(world);
-                // register the drop-origin, so the block can
-                // slide back to its former situation if dropped
-                // somewhere where it gets rejected
-                if (!ide && blockEditor) {
-                    ide = blockEditor.target.parentThatIsA(IDE_Morph);
-                }
-                if (ide) {
-                    world.hand.grabOrigin = {
-                        origin: ide.palette,
-                        position: ide.palette.center()
-                    };
-                }
-            },
-            'retrieve copied script'
-        );
+        
+            if (ide.clipboard) {
+            menu.addLine();
+            menu.addItem(
+                "paste",
+                () => {
+                    ide.userPaste();
+                },
+                'Retrieve script\nfrom clipboard'
+            );
+        }
         return menu;
     };
+
+    function injectFireEvent(fun, lookFor, code) {
+        let script = fun,
+            split = script.split('\n')
+        
+        for (var index = 0; index < split.length; index++) {
+            const line = split[index];
+            if (line.includes('this.children.concat')) {
+                break
+            }
+        }
+
+        split.splice(index, 0, code)
+
+        script = split.join('\n')
+        return script
+    }
+
+
+    let newScript = injectFireEvent(StageMorph.prototype.fireKeyEvent.toString(), 'this.children.concat', "    if (evt === 'ctrl shift c' || (evt === 'ctrl c')) {\n        ide.userCopy(evt);\n        return;\n    }\n    if (evt === 'ctrl x') {\n        ide.userCut(evt);\n        return;\n    }\n    if (evt === 'ctrl v' || (evt === 'ctrl shift v')) {\n        ide.userPaste();\n        return;\n    }")
+
+    let f = new Function('StageMorph.prototype.fireKeyEvent = ' + newScript)
+    f()
 })();
