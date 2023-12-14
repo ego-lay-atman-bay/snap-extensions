@@ -3,8 +3,6 @@ SnapExtensions.primitives.set(
     function(txt) {
         if ("clipboard" in navigator) {
             navigator.clipboard.writeText(txt)
-        } else {
-            alert("I can't send thing to clipboard.")
         }
     }
 );
@@ -21,7 +19,6 @@ SnapExtensions.primitives.set(
                     done = true
                 })
             } else {
-                alert("I can't retrieve thing from clipboard.");
                 done = true
             }
 
@@ -70,7 +67,6 @@ SnapExtensions.primitives.set(
                     })
                     .catch(err => error("I can't retrieve thing from clipboard: " + err));
             } else {
-                alert("I can't retrieve thing from clipboard.");
                 done = true
             }
 
