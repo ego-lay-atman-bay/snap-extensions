@@ -114,13 +114,35 @@
         IDE_Morph.prototype.scriptsPaneTexture = this.scriptsTexture();
     };
 
+    function findLine(lines, string) {
+        for (let index = lines.length - 1; index > 0; index--) {
+            const line = lines[index];
+            if (line.includes(string)) {
+                return index
+            }
+        }
+    }
+
     var menu = IDE_Morph.prototype.settingsMenu.toString();
-    var split = menu.split("\n    addPreference(\n        'Flat design',\n        () => {\n            if (MorphicPreferences.isFlat) {\n                return this.defaultDesign();\n            }\n            this.flatDesign();\n        },\n        MorphicPreferences.isFlat,\n        'uncheck for default\\nGUI design',\n        'check for alternative\\nGUI design',\n        false\n    );");
-    split.splice(1, 0, "    addPreference(\n        'Flat design',\n        () => {\n            if (MorphicPreferences.isFlat) {                return this.defaultDesign();\n            }\n            this.flatDesign();\n        },        MorphicPreferences.isFlat,\n        'uncheck for default\\nGUI design',        'check for alternative\\nGUI design',\n        false\n    );\n	addPreference(\n        'Dark theme',\n        () => {\n            if (MorphicPreferences.isLight) {\n                return this.darkDesign();\n            }\n            this.lightDesign();\n        },\n        !MorphicPreferences.isLight,\n        'uncheck for light\\nGUI theme',\n        'check for dark\\nGUI theme',\n        false\n    );");
-    var newFun = split.join('');
-    const dark_mode = new Function('IDE_Morph.prototype.settingsMenu = ' + newFun);
+    var split = menu.split('\n')
+
+    let line = findLine(split, 'menu.popup')
+
+    let showPopup = split[line]
+
+    split.splice(line, 1)
+
+    split.splice(split.length - 1, 0, '    return menu;')
+
+    var newFun = split.join('\n');
+    const dark_mode = new Function('IDE_Morph.prototype.getSettingsMenu = ' + newFun);
     dark_mode();
 
-    update_settings();
+    IDE_Morph.prototype.settingsMenu = function () {
+        let menu = this.getSettingsMenu()
+        let f = new Function(showPopup)
+        f()
+    }
 
+    update_settings();
 })();
