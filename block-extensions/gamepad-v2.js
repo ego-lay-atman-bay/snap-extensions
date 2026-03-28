@@ -29,7 +29,7 @@ SnapExtensions.primitives.set(
 
 SnapExtensions.primitives.set(
     'gp_rumble(index, duration, weak, strong)',
-    function() {
+    function(index, duration, weak, strong) {
         const gamepad = navigator.getGamepads()[index]
 
         if (!gamepad) {
