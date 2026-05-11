@@ -18,7 +18,7 @@ SnapExtensions.primitives.set(
             info.add(new List(['name',gamepad.id]))
             info.add(new List(['connected',gamepad.connected]))
             info.add(new List(['axes', new List(gamepad.axes)]))
-            info.add(new List(['buttons', new List(gamepad.buttons.map(button => button.pressed))]))
+            info.add(new List(['buttons', new List(gamepad.buttons.map(button => new List([button.pressed, button.value])))]))
             
             gamepadList.add(info)
         }
